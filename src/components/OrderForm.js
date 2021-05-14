@@ -8,25 +8,15 @@ export default function OrderForm() {
   }
 
   effects.push(() => {
-    const $itemSizeInputs = document.querySelectorAll(".itemSizeInput");
-    $itemSizeInputs.forEach(($itemSizeInput) => {
-      $itemSizeInput.addEventListener("change", onChangeItemSize);
+    const $items = document.querySelectorAll(".item");
+    $items.forEach(($item) => {
+      $item.addEventListener("change", onChangeItemSize);
+      $item.addEventListener("click", onClickRemoveItem);
     });
     return () => {
-      $itemSizeInputs.forEach(($itemSizeInput) => {
-        $itemSizeInput.removeEventListener("change", onChangeItemSize);
-      });
-    };
-  });
-
-  effects.push(() => {
-    const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
-    $removeItemBottons.forEach(($removeItemBotton) => {
-      $removeItemBotton.addEventListener("click", onClickRemoveItem);
-    });
-    return () => {
-      $removeItemBottons.forEach(($removeItemBotton) => {
-        $removeItemBotton.removeEventListener("click", onClickRemoveItem);
+      $items.forEach(($item) => {
+        $item.removeEventListener("change", onChangeItemSize);
+        $item.removeEventListener("click", onClickRemoveItem);
       });
     };
   });
@@ -39,9 +29,11 @@ export default function OrderForm() {
           ({ id }) => id === subOption.parentOptionId
         );
         return `
-          <div>${option.optionName} ${subOption.optionName}</div>
-          <input type="number" class="itemSizeInput" data-index="${index}" value="${size}" />
-          <button type="button" class="removeItemBotton" data-index="${index}">제거</button>
+          <div class="item" data-index="${index}">
+            <div>${option.optionName} ${subOption.optionName}</div>
+            <input type="number" class="itemSizeInput gogo" value="${size}" />
+            <button type="button" class="removeItemButton">제거</button>
+          </div>
         `;
       })
       .join("");
@@ -60,7 +52,11 @@ export default function OrderForm() {
 function onChangeItemSize(e) {
   const { index } = e.currentTarget.dataset;
 
-  let value = Number.parseInt(e.currentTarget.value);
+  if (!e.target.classList.contains("itemSizeInput")) {
+    return;
+  }
+
+  let value = Number.parseInt(e.target.value);
   if (!Number.isNaN(value)) {
     if (value < 1) {
       value = 1;
@@ -77,6 +73,11 @@ function onChangeItemSize(e) {
 
 function onClickRemoveItem(e) {
   const { index } = e.currentTarget.dataset;
+
+  if (!e.target.classList.contains("removeItemButton")) {
+    return;
+  }
+
   state.basket.splice(index, 1);
   rerender();
 }
