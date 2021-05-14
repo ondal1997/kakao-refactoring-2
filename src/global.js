@@ -50,10 +50,10 @@ function appDidMount() {
     });
 }
 
-function appDidUpdate() {
-  addListeners();
-}
-
 function appWillUpdate() {
   removeListeners();
+}
+
+function appDidUpdate() {
+  addListeners();
 }
