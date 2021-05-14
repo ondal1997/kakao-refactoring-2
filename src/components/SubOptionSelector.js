@@ -1,5 +1,5 @@
 function SubOptionSelector() {
-  const { selectedOptionId, subOptions, stocks } = state;
+  const { selectedOptionId, subOptions } = state;
 
   if (!selectedOptionId) {
     return "";
@@ -32,10 +32,17 @@ function SubOptionSelector() {
 
 function onSelectSubOption(e) {
   const subOptionId = e.currentTarget.value;
+  const stock = state.stocks[subOptionId];
 
   state.selectedSubOptionId = subOptionId;
 
-  console.log(state.stocks[subOptionId]);
+  if (stock.stock < 1) {
+    alert("재고가 없습니다.");
+  } else if (state.basket.some((item) => item.subOptionId === subOptionId)) {
+    alert("이미 선택된 항목입니다.");
+  } else {
+    state.basket.push({ subOptionId, size: 1 });
+  }
 
   updateApp();
 }
