@@ -1,5 +1,31 @@
-function OrderForm() {
+import { useEffect, state, updateApp } from "../index.js";
+
+export default function OrderForm() {
   const { options, subOptions, stocks, basket, basePrice } = state;
+
+  useEffect(() => {
+    const $itemSizeInputs = document.querySelectorAll(".itemSizeInput");
+    $itemSizeInputs.forEach(($itemSizeInput) => {
+      $itemSizeInput.addEventListener("change", onChangeItemSize);
+    });
+
+    const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
+    $removeItemBottons.forEach(($removeItemBotton) => {
+      $removeItemBotton.addEventListener("click", onClickRemoveItem);
+    });
+
+    return () => {
+      const $itemSizeInputs = document.querySelectorAll(".itemSizeInput");
+      $itemSizeInputs.forEach(($itemSizeInput) => {
+        $itemSizeInput.removeEventListener("change", onChangeItemSize);
+      });
+
+      const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
+      $removeItemBottons.forEach(($removeItemBotton) => {
+        $removeItemBotton.removeEventListener("click", onClickRemoveItem);
+      });
+    };
+  });
 
   if (basket.length === 0) {
     return "<p>항목을 선택해주세요.</p>";

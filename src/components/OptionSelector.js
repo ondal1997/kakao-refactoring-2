@@ -1,5 +1,22 @@
-function OptionSelector() {
+import { fetchStocks, fetchSubOptions } from "../api.js";
+import { useEffect, state, updateApp } from "../index.js";
+
+export default function OptionSelector() {
   const { options } = state;
+
+  useEffect(() => {
+    const $optionSelector = document.querySelector(".optionSelector");
+    if ($optionSelector) {
+      $optionSelector.addEventListener("change", onSelectOption);
+    }
+
+    return () => {
+      const $optionSelector = document.querySelector(".optionSelector");
+      if ($optionSelector) {
+        $optionSelector.removeEventListener("change", onSelectOption);
+      }
+    };
+  });
 
   if (!options) {
     return "Loading...";
