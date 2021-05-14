@@ -1,26 +1,14 @@
 import { fetchStocks, fetchSubOptions } from "../api.js";
-import { useEffect, state, updateApp } from "../index.js";
+import { pushEffect, state, updateApp } from "../index.js";
 
 export default function OptionSelector() {
   const { options } = state;
 
-  useEffect(() => {
-    const $optionSelector = document.querySelector(".optionSelector");
-    if ($optionSelector) {
-      $optionSelector.addEventListener("change", onSelectOption);
-    }
-
-    return () => {
-      const $optionSelector = document.querySelector(".optionSelector");
-      if ($optionSelector) {
-        $optionSelector.removeEventListener("change", onSelectOption);
-      }
-    };
-  });
-
   if (!options) {
     return "Loading...";
   }
+
+  pushEffect(effect);
 
   const Options = () =>
     options
@@ -40,6 +28,20 @@ export default function OptionSelector() {
     ${Options()}
   </select>
   `;
+}
+
+function effect() {
+  const $optionSelector = document.querySelector(".optionSelector");
+  if ($optionSelector) {
+    $optionSelector.addEventListener("change", onSelectOption);
+  }
+
+  return () => {
+    const $optionSelector = document.querySelector(".optionSelector");
+    if ($optionSelector) {
+      $optionSelector.removeEventListener("change", onSelectOption);
+    }
+  };
 }
 
 function onSelectOption(e) {

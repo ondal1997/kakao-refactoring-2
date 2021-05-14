@@ -1,21 +1,7 @@
-import { useEffect, state, updateApp } from "../index.js";
+import { pushEffect, state, updateApp } from "../index.js";
 
 export default function SubOptionSelector() {
   const { selectedOptionId, subOptions } = state;
-
-  useEffect(() => {
-    const $subOptionSelector = document.querySelector(".subOptionSelector");
-    if ($subOptionSelector) {
-      $subOptionSelector.addEventListener("change", onSelectSubOption);
-    }
-
-    return () => {
-      const $subOptionSelector = document.querySelector(".subOptionSelector");
-      if ($subOptionSelector) {
-        $subOptionSelector.removeEventListener("change", onSelectSubOption);
-      }
-    };
-  });
 
   if (!selectedOptionId) {
     return "";
@@ -24,6 +10,8 @@ export default function SubOptionSelector() {
   if (!state.loadedOptionIds.includes(selectedOptionId)) {
     return "Loading...";
   }
+
+  pushEffect(effect);
 
   const SubOptions = () =>
     subOptions
@@ -46,6 +34,20 @@ export default function SubOptionSelector() {
   `;
 }
 
+function effect() {
+  const $subOptionSelector = document.querySelector(".subOptionSelector");
+  if ($subOptionSelector) {
+    $subOptionSelector.addEventListener("change", onSelectSubOption);
+  }
+
+  return () => {
+    const $subOptionSelector = document.querySelector(".subOptionSelector");
+    if ($subOptionSelector) {
+      $subOptionSelector.removeEventListener("change", onSelectSubOption);
+    }
+  };
+}
+
 function onSelectSubOption(e) {
   const subOptionId = e.currentTarget.value;
   const stock = state.stocks[subOptionId];
@@ -53,7 +55,7 @@ function onSelectSubOption(e) {
   state.selectedSubOptionId = subOptionId;
 
   if (stock.stock < 1) {
-    alert("재고가x 없습니다.");
+    alert("재고가 없습니다.");
   } else if (state.basket.some((item) => item.subOptionId === subOptionId)) {
     alert("이미 선택된 항목입니다.");
   } else {

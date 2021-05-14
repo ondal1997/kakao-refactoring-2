@@ -19,30 +19,27 @@ const state = {
 
 const effects = [];
 
-function useEffect(effect) {
+function pushEffect(effect) {
   effects.push(effect);
 }
 
 function appDidMount() {
-  useEffect(() => {
-    fetchOptions()
-      .then((response) => response.json())
-      .then((options) => {
-        state.options = options;
-        updateApp();
-      });
-  });
-
   effects.forEach((effect, index) => {
     effects[index] = effect();
   });
+
+  // 초기 데이터 로드
+  fetchOptions()
+    .then((response) => response.json())
+    .then((options) => {
+      state.options = options;
+      updateApp();
+    });
 }
 
 function appWillUpdate() {
   effects.forEach((effect) => {
-    if (effect) {
-      effect();
-    }
+    effect();
   });
   effects.length = 0;
 }
@@ -64,4 +61,4 @@ function updateApp() {
   appDidUpdate();
 }
 
-export { state, updateApp, useEffect };
+export { state, updateApp, pushEffect };
