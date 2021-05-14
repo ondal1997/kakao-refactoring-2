@@ -8,7 +8,13 @@ export default function OptionSelector() {
     return "Loading...";
   }
 
-  effects.push(effect);
+  effects.push(() => {
+    const $optionSelector = document.querySelector(".optionSelector");
+    $optionSelector.addEventListener("change", onSelectOption);
+    return () => {
+      $optionSelector.removeEventListener("change", onSelectOption);
+    };
+  });
 
   const Options = () =>
     options
@@ -28,16 +34,6 @@ export default function OptionSelector() {
     ${Options()}
   </select>
   `;
-}
-
-function effect() {
-  const $optionSelector = document.querySelector(".optionSelector");
-
-  $optionSelector.addEventListener("change", onSelectOption);
-
-  return () => {
-    $optionSelector.removeEventListener("change", onSelectOption);
-  };
 }
 
 function onSelectOption(e) {

@@ -11,7 +11,13 @@ export default function SubOptionSelector() {
     return "Loading...";
   }
 
-  effects.push(effect);
+  effects.push(() => {
+    const $subOptionSelector = document.querySelector(".subOptionSelector");
+    $subOptionSelector.addEventListener("change", onSelectSubOption);
+    return () => {
+      $subOptionSelector.removeEventListener("change", onSelectSubOption);
+    };
+  });
 
   const SubOptions = () =>
     subOptions
@@ -32,16 +38,6 @@ export default function SubOptionSelector() {
     ${SubOptions()}
   </select>
   `;
-}
-
-function effect() {
-  const $subOptionSelector = document.querySelector(".subOptionSelector");
-
-  $subOptionSelector.addEventListener("change", onSelectSubOption);
-
-  return () => {
-    $subOptionSelector.removeEventListener("change", onSelectSubOption);
-  };
 }
 
 function onSelectSubOption(e) {

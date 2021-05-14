@@ -7,7 +7,29 @@ export default function OrderForm() {
     return "<p>항목을 선택해주세요.</p>";
   }
 
-  effects.push(effect);
+  effects.push(() => {
+    const $itemSizeInputs = document.querySelectorAll(".itemSizeInput");
+    $itemSizeInputs.forEach(($itemSizeInput) => {
+      $itemSizeInput.addEventListener("change", onChangeItemSize);
+    });
+    return () => {
+      $itemSizeInputs.forEach(($itemSizeInput) => {
+        $itemSizeInput.removeEventListener("change", onChangeItemSize);
+      });
+    };
+  });
+
+  effects.push(() => {
+    const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
+    $removeItemBottons.forEach(($removeItemBotton) => {
+      $removeItemBotton.addEventListener("click", onClickRemoveItem);
+    });
+    return () => {
+      $removeItemBottons.forEach(($removeItemBotton) => {
+        $removeItemBotton.removeEventListener("click", onClickRemoveItem);
+      });
+    };
+  });
 
   const Items = () =>
     basket
@@ -33,27 +55,6 @@ export default function OrderForm() {
     ${Items()}
     <p>총 ${totalPrice}원</p>
   `;
-}
-
-function effect() {
-  const $itemSizeInputs = document.querySelectorAll(".itemSizeInput");
-  const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
-
-  $itemSizeInputs.forEach(($itemSizeInput) => {
-    $itemSizeInput.addEventListener("change", onChangeItemSize);
-  });
-  $removeItemBottons.forEach(($removeItemBotton) => {
-    $removeItemBotton.addEventListener("click", onClickRemoveItem);
-  });
-
-  return () => {
-    $itemSizeInputs.forEach(($itemSizeInput) => {
-      $itemSizeInput.removeEventListener("change", onChangeItemSize);
-    });
-    $removeItemBottons.forEach(($removeItemBotton) => {
-      $removeItemBotton.removeEventListener("click", onClickRemoveItem);
-    });
-  };
 }
 
 function onChangeItemSize(e) {
