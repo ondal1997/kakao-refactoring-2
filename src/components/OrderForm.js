@@ -40,7 +40,7 @@ export default function OrderForm() {
 
   let totalPrice = 0;
   basket.forEach(({ subOptionId, size }) => {
-    totalPrice += (stocks[subOptionId].optionPrice + basePrice) * size;
+    totalPrice += (basePrice + stocks[subOptionId].optionPrice) * size;
   });
 
   return `
@@ -49,35 +49,31 @@ export default function OrderForm() {
   `;
 }
 
-function onChangeItemSize(e) {
-  const { index } = e.currentTarget.dataset;
-
-  if (!e.target.classList.contains("itemSizeInput")) {
+function onChangeItemSize({ target, currentTarget }) {
+  if (!target.classList.contains("itemSizeInput")) {
     return;
   }
 
-  let value = Number.parseInt(e.target.value);
+  const { index } = currentTarget.dataset;
+  let value = Number.parseInt(target.value);
   if (!Number.isNaN(value)) {
     if (value < 1) {
       value = 1;
     }
-
     if (value > state.stocks[state.basket[index].subOptionId].stock) {
       value = state.stocks[state.basket[index].subOptionId].stock;
     }
-
     state.basket[index].size = value;
   }
   rerender();
 }
 
-function onClickRemoveItem(e) {
-  const { index } = e.currentTarget.dataset;
-
-  if (!e.target.classList.contains("removeItemButton")) {
+function onClickRemoveItem({ target, currentTarget }) {
+  if (!target.classList.contains("removeItemButton")) {
     return;
   }
 
+  const { index } = currentTarget.dataset;
   state.basket.splice(index, 1);
   rerender();
 }

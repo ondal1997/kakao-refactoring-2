@@ -31,22 +31,19 @@ export default function SubOptionSelector() {
       .join("");
 
   return `
-  <select class="subOptionSelector">
-    <option disabled ${
-      state.selectedSubOptionId === null ? "selected" : ""
-    }>세부 옵션 선택</option>
-    ${SubOptions()}
-  </select>
+    <select class="subOptionSelector">
+      <option disabled ${
+        state.selectedSubOptionId === null ? "selected" : ""
+      }>세부 옵션 선택</option>
+      ${SubOptions()}
+    </select>
   `;
 }
 
-function onSelectSubOption(e) {
-  const subOptionId = e.currentTarget.value;
-  const stock = state.stocks[subOptionId];
+function onSelectSubOption({ currentTarget }) {
+  const subOptionId = currentTarget.value;
 
-  state.selectedSubOptionId = subOptionId;
-
-  if (stock.stock < 1) {
+  if (state.stocks[subOptionId].stock < 1) {
     alert("재고가 없습니다.");
   } else if (state.basket.some((item) => item.subOptionId === subOptionId)) {
     alert("이미 선택된 항목입니다.");
@@ -54,5 +51,6 @@ function onSelectSubOption(e) {
     state.basket.push({ subOptionId, size: 1 });
   }
 
+  state.selectedSubOptionId = subOptionId;
   rerender();
 }

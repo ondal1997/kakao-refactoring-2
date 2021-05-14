@@ -27,39 +27,38 @@ export default function OptionSelector() {
       .join("");
 
   return `
-  <select class="optionSelector">
-    <option disabled ${
-      state.selectedOptionId === null ? "selected" : ""
-    }>상품 옵션 선택</option>
-    ${Options()}
-  </select>
+    <select class="optionSelector">
+      <option disabled ${
+        state.selectedOptionId === null ? "selected" : ""
+      }>상품 옵션 선택</option>
+      ${Options()}
+    </select>
   `;
 }
 
-function onSelectOption(e) {
-  const optionId = e.currentTarget.value;
-
-  state.selectedOptionId = optionId;
-  state.selectedSubOptionId = null;
+function onSelectOption({ currentTarget }) {
+  const optionId = currentTarget.value;
 
   if (!state.visitedOptionIds.includes(optionId)) {
     state.visitedOptionIds.push(optionId);
 
-    fetchSubOptions(optionId)
-      .then((response) => response.json())
-      .then((subOptions) => {
-        state.subOptions = [...state.subOptions, ...subOptions];
+    (async () => {
+      let response;
 
-        fetchStocks(subOptions.map(({ id }) => id))
-          .then((response) => response.json())
-          .then((stocks) => {
-            state.stocks = { ...state.stocks, ...stocks };
+      response = await fetchSubOptions(optionId);
+      const subOptions = await response.json();
+      state.subOptions = [...state.subOptions, ...subOptions];
 
-            state.loadedOptionIds.push(optionId);
-            rerender();
-          });
-      });
+      response = await fetchStocks(subOptions.map(({ id }) => id));
+      const stocks = await response.json();
+      state.stocks = { ...state.stocks, ...stocks };
+
+      state.loadedOptionIds.push(optionId);
+      rerender();
+    })();
   }
 
+  state.selectedOptionId = optionId;
+  state.selectedSubOptionId = null;
   rerender();
 }
