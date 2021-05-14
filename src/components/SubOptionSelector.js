@@ -1,4 +1,4 @@
-import { pushEffect, state, updateApp } from "../index.js";
+import { effects, state, rerender } from "../index.js";
 
 export default function SubOptionSelector() {
   const { selectedOptionId, subOptions } = state;
@@ -11,7 +11,7 @@ export default function SubOptionSelector() {
     return "Loading...";
   }
 
-  pushEffect(effect);
+  effects.push(effect);
 
   const SubOptions = () =>
     subOptions
@@ -36,15 +36,11 @@ export default function SubOptionSelector() {
 
 function effect() {
   const $subOptionSelector = document.querySelector(".subOptionSelector");
-  if ($subOptionSelector) {
-    $subOptionSelector.addEventListener("change", onSelectSubOption);
-  }
+
+  $subOptionSelector.addEventListener("change", onSelectSubOption);
 
   return () => {
-    const $subOptionSelector = document.querySelector(".subOptionSelector");
-    if ($subOptionSelector) {
-      $subOptionSelector.removeEventListener("change", onSelectSubOption);
-    }
+    $subOptionSelector.removeEventListener("change", onSelectSubOption);
   };
 }
 
@@ -62,5 +58,5 @@ function onSelectSubOption(e) {
     state.basket.push({ subOptionId, size: 1 });
   }
 
-  updateApp();
+  rerender();
 }

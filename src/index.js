@@ -17,48 +17,40 @@ const state = {
   basket: [],
 };
 
-const effects = [];
+const effects = [
+  // 초기 데이터 로드
+  () => {
+    fetchOptions()
+      .then((response) => response.json())
+      .then((options) => {
+        state.options = options;
+        rerender();
+      });
+  },
+];
 
-function pushEffect(effect) {
-  effects.push(effect);
-}
-
-function appDidMount() {
+function appDidRender() {
   effects.forEach((effect, index) => {
     effects[index] = effect();
   });
-
-  // 초기 데이터 로드
-  fetchOptions()
-    .then((response) => response.json())
-    .then((options) => {
-      state.options = options;
-      updateApp();
-    });
 }
 
-function appWillUpdate() {
+function appWillRerender() {
   effects.forEach((effect) => {
-    effect();
+    if (effect) effect();
   });
   effects.length = 0;
-}
-
-function appDidUpdate() {
-  effects.forEach((effect, index) => {
-    effects[index] = effect();
-  });
 }
 
 const $app = document.querySelector("#app");
 
 $app.innerHTML = App();
-appDidMount();
+appDidRender();
 
-function updateApp() {
-  appWillUpdate();
+function rerender() {
+  appWillRerender();
   $app.innerHTML = App();
-  appDidUpdate();
+  appDidRender();
 }
 
-export { state, updateApp, pushEffect };
+export { state, effects, rerender };

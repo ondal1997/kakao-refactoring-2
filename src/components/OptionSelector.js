@@ -1,5 +1,5 @@
 import { fetchStocks, fetchSubOptions } from "../api.js";
-import { pushEffect, state, updateApp } from "../index.js";
+import { effects, state, rerender } from "../index.js";
 
 export default function OptionSelector() {
   const { options } = state;
@@ -8,7 +8,7 @@ export default function OptionSelector() {
     return "Loading...";
   }
 
-  pushEffect(effect);
+  effects.push(effect);
 
   const Options = () =>
     options
@@ -32,15 +32,11 @@ export default function OptionSelector() {
 
 function effect() {
   const $optionSelector = document.querySelector(".optionSelector");
-  if ($optionSelector) {
-    $optionSelector.addEventListener("change", onSelectOption);
-  }
+
+  $optionSelector.addEventListener("change", onSelectOption);
 
   return () => {
-    const $optionSelector = document.querySelector(".optionSelector");
-    if ($optionSelector) {
-      $optionSelector.removeEventListener("change", onSelectOption);
-    }
+    $optionSelector.removeEventListener("change", onSelectOption);
   };
 }
 
@@ -64,10 +60,10 @@ function onSelectOption(e) {
             state.stocks = { ...state.stocks, ...stocks };
 
             state.loadedOptionIds.push(optionId);
-            updateApp();
+            rerender();
           });
       });
   }
 
-  updateApp();
+  rerender();
 }

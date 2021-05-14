@@ -1,4 +1,4 @@
-import { pushEffect, state, updateApp } from "../index.js";
+import { effects, state, rerender } from "../index.js";
 
 export default function OrderForm() {
   const { options, subOptions, stocks, basket, basePrice } = state;
@@ -7,7 +7,7 @@ export default function OrderForm() {
     return "<p>항목을 선택해주세요.</p>";
   }
 
-  pushEffect(effect);
+  effects.push(effect);
 
   const Items = () =>
     basket
@@ -37,26 +37,23 @@ export default function OrderForm() {
 
 function effect() {
   const $itemSizeInputs = document.querySelectorAll(".itemSizeInput");
+  const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
+
+  $itemSizeInputs.forEach(($itemSizeInput) => {
+    $itemSizeInput.addEventListener("change", onChangeItemSize);
+  });
+  $removeItemBottons.forEach(($removeItemBotton) => {
+    $removeItemBotton.addEventListener("click", onClickRemoveItem);
+  });
+
+  return () => {
     $itemSizeInputs.forEach(($itemSizeInput) => {
-      $itemSizeInput.addEventListener("change", onChangeItemSize);
+      $itemSizeInput.removeEventListener("change", onChangeItemSize);
     });
-
-    const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
     $removeItemBottons.forEach(($removeItemBotton) => {
-      $removeItemBotton.addEventListener("click", onClickRemoveItem);
+      $removeItemBotton.removeEventListener("click", onClickRemoveItem);
     });
-
-    return () => {
-      const $itemSizeInputs = document.querySelectorAll(".itemSizeInput");
-      $itemSizeInputs.forEach(($itemSizeInput) => {
-        $itemSizeInput.removeEventListener("change", onChangeItemSize);
-      });
-
-      const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
-      $removeItemBottons.forEach(($removeItemBotton) => {
-        $removeItemBotton.removeEventListener("click", onClickRemoveItem);
-      });
-    };
+  };
 }
 
 function onChangeItemSize(e) {
@@ -74,11 +71,11 @@ function onChangeItemSize(e) {
 
     state.basket[index].size = value;
   }
-  updateApp();
+  rerender();
 }
 
 function onClickRemoveItem(e) {
   const { index } = e.currentTarget.dataset;
   state.basket.splice(index, 1);
-  updateApp();
+  rerender();
 }
