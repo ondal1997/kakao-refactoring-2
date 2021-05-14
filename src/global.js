@@ -24,6 +24,16 @@ function addListeners() {
   if ($subOptionSelector) {
     $subOptionSelector.addEventListener('change', onSelectSubOption); 
   }
+
+  const $itemSizeInputs = document.querySelectorAll(".itemSizeInput");
+  $itemSizeInputs.forEach(($itemSizeInput) => {
+    $itemSizeInput.addEventListener('change', onChangeItemSize);
+  })
+
+  const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
+  $removeItemBottons.forEach(($removeItemBotton) => {
+    $removeItemBotton.addEventListener('click', onClickRemoveItem);
+  })
 }
 
 function removeListeners() {
@@ -36,6 +46,16 @@ function removeListeners() {
   if ($subOptionSelector) {
     $subOptionSelector.removeEventListener('change', onSelectSubOption); 
   }
+
+  const $itemSizeInputs = document.querySelectorAll(".itemSizeInput");
+  $itemSizeInputs.forEach(($itemSizeInput) => {
+    $itemSizeInput.removeEventListener('change', onChangeItemSize);
+  })
+
+  const $removeItemBottons = document.querySelectorAll(".removeItemBotton");
+  $removeItemBottons.forEach(($removeItemBotton) => {
+    $removeItemBotton.removeEventListener('click', onClickRemoveItem);
+  })
 }
 
 function appDidMount() {
